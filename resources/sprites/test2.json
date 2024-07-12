@@ -1,0 +1,38 @@
+{
+    "initial_state": "Left",
+    "texture_path": "resources/textures/Prototype_Character.png",
+    "size": [32, 32],
+    "animations": [
+        {
+            "name": "Left",
+            "num_frames_x": 4,
+            "num_frames_y": 1,
+            "animation_speed": 125.0,
+            "x_offset": 4,
+            "flip": true
+        },
+        {
+            "name": "Right",
+            "num_frames_x": 4,
+            "num_frames_y": 1,
+            "animation_speed": 125.0,
+            "x_offset": 4,
+            "flip": false
+        },
+        {
+            "name": "Down",
+            "num_frames_x": 4,
+            "num_frames_y": 1,
+            "animation_speed": 125.0,
+            "x_offset": 3
+        },
+        {
+            "name": "Up",
+            "num_frames_x": 4,
+            "num_frames_y": 1,
+            "animation_speed": 125.0,
+            "x_offset": 5,
+            "flip": false
+        }
+    ]
+}

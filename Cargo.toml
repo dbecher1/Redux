@@ -1,0 +1,11 @@
+[package]
+name = "rpg_mq"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ahash = { version = "0.8.11", features = ["serde"] }
+macroquad = "0.4.6"
+serde = { version = "1.0.203", features = ["derive"] }
+serde_json = "*"
+toml = "0.8.13"

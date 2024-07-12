@@ -1,0 +1,19 @@
+# This is an atlas file
+current_state = "Run"
+texture_path = "resources/textures/Prototype_Character.png"
+
+# The size of one frame
+size = [120, 80]
+
+[animations]
+name = "json"
+num_frames_x = 10
+num_frames_y = 1
+animation_speed = 125.0
+
+
+[animations.Run]
+num_frames_x = 10
+num_frames_y = 1
+size = [120, 80]
+animation_speed = 75.0
