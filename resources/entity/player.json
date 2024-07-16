@@ -1,0 +1,6 @@
+{
+    "name": "Player",
+    "animation_data": "test_atlas",
+    "move_speed": 150,
+    "default_position": [0, 0]
+}

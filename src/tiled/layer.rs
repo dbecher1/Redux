@@ -1,12 +1,14 @@
 
 use serde::Deserialize;
 use super::chunk::MapChunk;
+use super::MapLayerDrawOptions;
 
 #[derive(Deserialize, Debug)]
 #[allow(dead_code)]
-pub(crate) struct RawMapLayerData {
+pub(crate) struct MapLayer {
     data: Option<Vec<u32>>,
     chunks: Option<Vec<MapChunk>>,
+    draw_type: Option<MapLayerDrawOptions>, // ugly but necessary for serde
     height: usize,
     width: usize,
     x: u8,
@@ -17,7 +19,21 @@ pub(crate) struct RawMapLayerData {
     visible: bool,
 }
 
-impl RawMapLayerData {
+impl MapLayer {
+
+    pub(crate) fn draw_type(&self) -> MapLayerDrawOptions {
+        if let Some(dt) = self.draw_type {
+            dt
+        }
+        else {
+            MapLayerDrawOptions::NotSpecified
+        }
+    }
+
+    pub(crate) fn set_draw_type(&mut self, draw: MapLayerDrawOptions) {
+        self.draw_type = Some(draw);
+    }
+
     pub(crate) fn data(&self) -> &Option<Vec<u32>> {
         &self.data
     }

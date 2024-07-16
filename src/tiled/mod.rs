@@ -1,6 +1,5 @@
 
 use macroquad::texture::{load_texture,FilterMode};
-use tilemap::TileMap;
 use tileset::TileSet;
 use std::fs::File;
 use serde_json::Result;
@@ -13,6 +12,9 @@ mod tilemap;
 mod tileset;
 
 use misc::RawTileMap;
+
+pub use tilemap::TileMap;
+pub use misc::MapLayerDrawOptions;
 
 /**
  * Biggest TODO: figure out how best to label the "player" layer for Y-sorting, and therefore to distinguish best drawing below/above player

@@ -1,6 +1,15 @@
 
 use serde::Deserialize;
-use super::layer::RawMapLayerData;
+use super::layer::MapLayer;
+
+#[derive(Copy, Clone, Debug, Deserialize, PartialEq)]
+pub enum MapLayerDrawOptions {
+    NotSpecified,
+    BelowPlayer,
+    PlayerUnsorted,
+    PlayerSorted,
+    AbovePlayer
+}
 
 #[derive(Deserialize, Debug)]
 pub(crate) struct TileSetReadData {
@@ -15,6 +24,6 @@ pub(crate) struct RawTileMap {
     pub(crate) tilewidth: u8,
     pub(crate) tileheight: u8,
     pub(crate) infinite: bool,
-    pub(crate) layers: Vec<RawMapLayerData>,
+    pub(crate) layers: Vec<MapLayer>,
     pub(crate) tilesets: Vec<TileSetReadData>,
 }

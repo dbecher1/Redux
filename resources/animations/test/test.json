@@ -1,0 +1,19 @@
+{
+    "initial_state": "_Idle",
+    "animations": [
+        {
+            "num_frames_x": 10,
+            "num_frames_y": 1,
+            "animation_speed": 125.0,
+            "texture_name": "_Idle.png",
+            "size": [120, 80]
+        },
+        {
+            "num_frames_x": 10,
+            "num_frames_y": 1,
+            "animation_speed": 125.0,
+            "texture_name": "_Run.png",
+            "size": [120, 80]
+        }
+    ]
+}
