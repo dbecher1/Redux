@@ -51,7 +51,11 @@ impl TileMap {
         (x, y)
     }
 
-    fn draw_helper(&self, tid: u32, x: f32, y: f32, spritebatch: &mut Option<&mut SpriteBatch>) {
+    pub fn draw(&self, spritebatch: &mut SpriteBatch) {
+        self.draw_layers_inner(&[], Some(spritebatch));
+    }
+
+    fn draw_helper(&self, tid: u32, x: f32, y: f32, z: usize, spritebatch: &mut Option<&mut SpriteBatch>) {
         let rect = self.tileset.to_rect(tid);
         let size = Vec2::new(self.tilewidth as f32 * self.draw_scale, self.tileheight as f32 * self.draw_scale);
         let params = DrawTextureParams {
@@ -62,11 +66,13 @@ impl TileMap {
 
         match spritebatch {
             Some(sb) => {
-                let dc = DrawCommand{
+                let dc = DrawCommand {
                     texture: self.texture.weak_clone(),
                     x,
                     y,
-                    params
+                    z: Some(z),
+                    params,
+                    ..Default::default()
                 };
                 sb.add(dc);
             },
@@ -137,7 +143,7 @@ impl TileMap {
                 for (i, tile) in data.iter().enumerate().filter(|(_, t)| **t != 0) {
                     let (x, y) = self.idx_to_x_y(i);
 
-                    self.draw_helper(*tile, x, y, &mut spritebatch);
+                    self.draw_helper(*tile, x, y, layer.z(), &mut spritebatch);
                 }
             }
             else {
@@ -146,21 +152,22 @@ impl TileMap {
                 if let Some(chunks) = layer.chunks() {
                     // let w = chunks.first().unwrap().width;
                     let w = layer.chunk_width().unwrap();
-                    let num_chunks_x = layer.width() / w;
+                    let num_chunks_x = layer.width() as i32 / w;
 
-                    for (i, chunk) in chunks.iter().enumerate() {
-                        for y in 0..chunk.height() {
-                            for x in 0..chunk.width() {
-                                let tile_id = chunk.data()[(y * chunk.width()) + x];
+                    for (chunk, i) in chunks.iter().zip((0 as i32)..) {
+                        for (yidx, y) in (chunk.y()..chunk.y() + chunk.height()).enumerate() {
+                            for (xidx, x) in (chunk.x()..chunk.x() + chunk.width()).enumerate() {
+                                
+                                let tile_id = chunk.data()[((yidx * chunk.width() as usize) + xidx) as usize];
 
                                 if tile_id == 0 {
                                     continue;
                                 }
 
-                                let real_x = (((i % num_chunks_x) * chunk.width() * self.tilewidth) + (x * self.tilewidth)) as f32 * self.draw_scale;
-                                let real_y = (((i / num_chunks_x) * chunk.height() * self.tileheight) + (y * self.tileheight)) as f32 * self.draw_scale;
+                                let real_x = (((i % num_chunks_x) * chunk.width() * self.tilewidth as i32) + (x * self.tilewidth as i32)) as f32 * self.draw_scale;
+                                let real_y = (((i / num_chunks_x) * chunk.height() * self.tileheight as i32) + (y * self.tileheight as i32)) as f32 * self.draw_scale;
                                 
-                                self.draw_helper(tile_id, real_x, real_y, &mut spritebatch);
+                                self.draw_helper(tile_id, real_x, real_y, layer.z(), &mut spritebatch);
                             }
                         }
                     }

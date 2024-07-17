@@ -10,6 +10,7 @@ mod layer;
 mod misc;
 mod tilemap;
 mod tileset;
+mod properties;
 
 use misc::RawTileMap;
 

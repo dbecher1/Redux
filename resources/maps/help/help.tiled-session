@@ -1,0 +1,43 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "help.tmj",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "help.tmj": {
+            "scale": 1,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": -157.5,
+                "y": 116
+            }
+        },
+        "helpset.tsj": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.imagePath": "C:/Users/debec/OneDrive/Documents/CODE/rpg_mq/resources/maps/help",
+    "map.fixedSize": false,
+    "map.lastUsedFormat": "json",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "openFiles": [
+        "help.tmj",
+        "helpset.tsj"
+    ],
+    "project": "help.tiled-project",
+    "property.type": "int",
+    "recentFiles": [
+        "helpset.tsj",
+        "help.tmj"
+    ],
+    "tileset.lastUsedFormat": "json",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}

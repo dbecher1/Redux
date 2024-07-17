@@ -109,17 +109,21 @@ impl Animation {
             flip_x: self.flip,
             ..Default::default()
         };
+
         match spritebatch {
             Some(sb) => {
-                let dc = DrawCommand{
+                let z = Some(sb.sort_layer());
+                let dc = DrawCommand {
                     texture: tex.weak_clone(),
                     x,
                     y,
-                    params
+                    z,
+                    params,
+                    ..Default::default()
                 };
                 sb.add(dc);
             },
-            None => draw_texture_ex(tex, x, y, WHITE, params),
+            None => {}, //draw_texture_ex(tex, x, y, WHITE, params),
         }
         // 
     }

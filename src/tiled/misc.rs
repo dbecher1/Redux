@@ -14,6 +14,9 @@ pub enum MapLayerDrawOptions {
 #[derive(Deserialize, Debug)]
 pub(crate) struct TileSetReadData {
     pub(crate) source: String,
+    
+    #[allow(dead_code)]
+    pub(crate) firstgid: u32,
 }
 
 #[derive(Deserialize, Debug)]
@@ -27,3 +30,4 @@ pub(crate) struct RawTileMap {
     pub(crate) layers: Vec<MapLayer>,
     pub(crate) tilesets: Vec<TileSetReadData>,
 }
+
