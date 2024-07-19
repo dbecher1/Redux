@@ -1,67 +1,83 @@
 
-use serde::Deserialize;
-use super::chunk::MapChunk;
-use super::MapLayerDrawOptions::{self, *};
+use ahash::AHashMap;
+use super::{data::MapData::{self, *}, misc::MapLayerLoader, properties::TileMapProperty};
 
-#[derive(Deserialize, Debug)]
-#[allow(dead_code)]
+#[derive(Debug)]
+//#[allow(dead_code)]
+// Parallax not supported (not yet needed in the scope of what I'm doing)
 pub(crate) struct MapLayer {
-    data: Option<Vec<u32>>,
-    chunks: Option<Vec<MapChunk>>,
-
-    draw_type: Option<MapLayerDrawOptions>, // ugly but necessary for serde
-    height: usize,
+    data: MapData,
     width: usize,
+    height: usize,
     x: u8,
     y: u8,
-    z: Option<usize>,
-    id: u8,
+    z: usize,
     name: String,
-    parallaxx: Option<f32>,
     visible: bool,
+    properties: Option<AHashMap<String, TileMapProperty>>,
 }
 
 impl MapLayer {
 
-    pub(crate) fn draw_type(&self) -> MapLayerDrawOptions {
-        if let Some(dt) = self.draw_type {
-            dt
-        }
-        else {
-            MapLayerDrawOptions::NotSpecified
+    pub(crate) fn new_from_raw(raw: MapLayerLoader) -> Self {
+        let data = match raw.data {
+            Some(dat) => MapData::RawData(dat),
+            None => match raw.chunks {
+                Some(chunk) => MapData::Chunks(chunk),
+                None => panic!("Very invalid map data provided!"),
+            }
+        };
+
+        let width = raw.width;
+        let height = raw.height;
+        let x = raw.x;
+        let y = raw.y;
+        let z = raw.z.unwrap_or_default();
+        let name = raw.name;
+        let visible = raw.visible;
+
+        let properties = match raw.properties {
+            Some(prop) => {
+                let mut hm = AHashMap::new();
+                for p in prop {
+                    let k = p.name.clone();
+                    let v = TileMapProperty::from_json_value(p.value, &p.name);
+                    hm.insert(k, v);
+                }
+                Some(hm)
+            },
+            None => None,
+        };
+
+        Self {
+            data,
+            width,
+            height,
+            x,
+            y,
+            z,
+            name,
+            visible,
+            properties,
         }
     }
 
     pub(crate) fn z(&self) -> usize {
-        self.z.unwrap_or_default()
+        self.z
     }
 
-    pub(crate) fn set_draw_type(&mut self, draw: MapLayerDrawOptions) {
-        self.draw_type = Some(draw);
-        let z_ = match draw {
-            BelowPlayer => 1,
-            PlayerSorted => 2,
-            AbovePlayer => 3,
-            _ => 0
-        };
-        self.z = Some(z_);
-    }
-
-    pub(crate) fn data(&self) -> &Option<Vec<u32>> {
+    pub(crate) fn data(&self) -> &MapData {
         &self.data
-    }
-
-    pub(crate) fn chunks(&self) -> &Option<Vec<MapChunk>> {
-        &self.chunks
     }
 
     pub(crate) fn width(&self) -> usize {
         self.width
     }
 
+    // This assumes uniform chunk width.... careful!
     pub(crate) fn chunk_width(&self) -> Option<i32> {
-        return match &self.chunks {
-            Some(chunk) => match chunk.first() {
+        return match &self.data {
+            Chunks(chunk) => match chunk.first() {
                 Some(first) => Some(first.width()),
                 _ => None,
             },

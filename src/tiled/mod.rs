@@ -1,4 +1,5 @@
 
+use layer::MapLayer;
 use macroquad::texture::{load_texture,FilterMode};
 use tileset::TileSet;
 use std::fs::File;
@@ -6,6 +7,7 @@ use serde_json::Result;
 use ahash::AHashSet;
 
 mod chunk;
+mod data;
 mod layer;
 mod misc;
 mod tilemap;
@@ -85,18 +87,22 @@ pub async fn load_map(path: &str, tilesets: &[(&str, &str)]) -> Result<TileMap> 
         textures.push(texture);
     }
     let texture = textures[0].clone();
+
+    let layers = raw_map.layers
+        .into_iter()
+        .map(|l| MapLayer::new_from_raw(l))
+        .collect::<Vec<MapLayer>>();
     // println!("{:?}", raw_map);
 
     let map = TileMap {
         texture,
         tileset,
-        layers: raw_map.layers,
+        layers,
         width: raw_map.width,
         height: raw_map.height,
         tilewidth: raw_map.tilewidth as usize,
         tileheight: raw_map.tileheight as usize,
         draw_scale: 1.,
-        player_layer: 1,
     };
     // println!("{:?}", map);
     Ok(map)

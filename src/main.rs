@@ -39,6 +39,7 @@ async fn main() {
 
         // DRAW //
         
+        
         map.draw(&mut sb);
         player.draw(Some(&mut sb));
 

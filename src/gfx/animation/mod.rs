@@ -68,6 +68,10 @@ impl Animation {
         }
     }
 
+    fn increment_frame(&mut self) {
+        self.current_frame = (self.current_frame + 1) % self.num_frames_x;
+    }
+
     pub fn reset(&mut self) {
         self.accumulator = 0.;
         self.current_frame = self.default_frame;
@@ -80,6 +84,7 @@ impl Animation {
 
     pub fn start(&mut self) {
         self.is_playing = true;
+        self.increment_frame();   
     }
 
     pub fn draw(&self, x: f32, y: f32, texture: &Option<Texture2D>, spritebatch: Option<&mut SpriteBatch>) {
@@ -114,7 +119,7 @@ impl Animation {
             Some(sb) => {
                 let z = Some(sb.sort_layer());
                 let dc = DrawCommand {
-                    texture: tex.weak_clone(),
+                    texture: Some(tex.weak_clone()),
                     x,
                     y,
                     z,
@@ -137,7 +142,7 @@ impl Updateable for Animation {
         self.accumulator += dt;
         if self.accumulator >= self.animation_speed {
             self.accumulator = 0.;
-            self.current_frame = (self.current_frame + 1) % self.num_frames_x;
+            self.increment_frame();
         }
     }
 }

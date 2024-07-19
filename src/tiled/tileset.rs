@@ -19,6 +19,11 @@ pub(crate) struct TileSet {
 
 impl TileSet {
     pub(crate) fn to_rect(&self, gid: u32) -> Rect {
+
+        if gid == 0 {
+            return Rect::new(0., 0., 0., 0.)
+        }
+
         let tile_count_x = self.imagewidth / self.tilewidth;
 
         let x = (((gid % tile_count_x) - 1) * self.tilewidth) as f32;
@@ -26,7 +31,7 @@ impl TileSet {
         let w = self.tilewidth as f32;
         let h = self.tileheight as f32;
 
-        Rect {x, y, w, h}
+        Rect{x, y, w, h}
     }
 
     pub(crate) fn image(&self) -> &String {

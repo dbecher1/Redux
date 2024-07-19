@@ -4,7 +4,7 @@ use macroquad::texture::{DrawTextureParams, Texture2D};
 
 #[derive(Debug)]
 pub struct DrawCommand {
-    pub texture: Texture2D,
+    pub texture: Option<Texture2D>,
     pub texture_experiment: Option<Rc<Texture2D>>,
     pub x: f32,
     pub y: f32,
@@ -15,7 +15,7 @@ pub struct DrawCommand {
 impl Default for DrawCommand {
     fn default() -> Self {
         Self {
-            texture: Texture2D::empty(),
+            texture: None,
             texture_experiment: None,
             x: 0.,
             y: 0.,

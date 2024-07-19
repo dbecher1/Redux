@@ -1,4 +1,6 @@
+use macroquad::color::RED;
 use macroquad::math::{Rect, Vec2};
+use macroquad::shapes::{draw_rectangle, draw_rectangle_ex, draw_rectangle_lines};
 use macroquad::window::{screen_height, screen_width};
 use macroquad::{color::WHITE, texture::draw_texture_ex};
 use std::cmp::Ordering;
@@ -77,13 +79,15 @@ impl SpriteBatch {
         let half_size = self.half_size();
 
         let x_offset = if self.camera.x - half_size.0 < 0. {
-            0.
+            // 0. // SHOULD BE THIS
+            self.camera.x - half_size.0
         } else {
             self.camera.x - half_size.0
         };
 
         let y_offset = if self.camera.y - half_size.1 < 0. {
-            0.
+            // 0. // SHOULD BE THIS
+            self.camera.y - half_size.1
         } else {
             self.camera.y - half_size.1
         };
@@ -94,17 +98,27 @@ impl SpriteBatch {
             }
             for dc in v.drain(0..) {
 
-                // hack to prevent sub-pixel tearing
-                let x = ((dc.x - x_offset) as i32) as f32;
-                let y = ((dc.y - y_offset) as i32) as f32;
+                // floor to prevent sub-pixel tearing
+                let x = (dc.x - x_offset).floor();
+                let y = (dc.y - y_offset).floor();
 
-                draw_texture_ex(
-                    &dc.texture,
-                    x,
-                    y,
-                    WHITE,
-                    dc.params
-                );
+                match &dc.texture {
+                    Some(texture) => {
+                        draw_texture_ex(
+                            &texture,
+                            x,
+                            y,
+                            WHITE,
+                            dc.params
+                        );
+                    },
+                    None => {
+                        let size = dc.params.dest_size.unwrap_or_default();
+                        draw_rectangle_lines(x, y, size.x, size.y, 1., RED);
+                    },
+                }
+
+                
             }
         }
     }
