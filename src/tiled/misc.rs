@@ -1,15 +1,6 @@
 
 use serde::Deserialize;
-use super::{layer::MapLayer, chunk::MapChunk, properties::PropertyLoader};
-
-#[derive(Copy, Clone, Debug, Deserialize, PartialEq)]
-pub enum MapLayerDrawOptions {
-    NotSpecified,
-    BelowPlayer,
-    PlayerUnsorted,
-    PlayerSorted,
-    AbovePlayer
-}
+use super::{chunk::MapChunk, properties::PropertyLoader};
 
 #[derive(Deserialize, Debug)]
 pub(crate) struct TileSetReadData {

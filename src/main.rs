@@ -8,9 +8,8 @@ mod tiled;
 mod gfx;
 mod entity;
 
-use miniquad::window::get_window_position;
 // use crate::tools::ResourceManager;
-use tiled::{load_map, MapLayerDrawOptions};
+use tiled::load_map;
 
 #[macroquad::main("test")]
 async fn main() {
@@ -18,9 +17,6 @@ async fn main() {
     //let mut map = load_map("resources/maps/untitled3.tmj", &[("tiles.tsx", "tiles.tsj")]).await.unwrap();
     let mut map = load_map("resources/maps/help/help.tmj", &[]).await.unwrap();
     map.set_draw_scale(2.0);
-    //map.set_layer_draw_type_by_idx(&[0,1], MapLayerDrawOptions::BelowPlayer);
-    //map.set_layer_draw_type_by_idx(&[2], MapLayerDrawOptions::PlayerSorted);
-    //map.set_layer_draw_type_by_idx(&[3], MapLayerDrawOptions::AbovePlayer);
     let mut player = Player::new("player").await.unwrap();
 
     let mut sb = SpriteBatch::new();
@@ -38,7 +34,6 @@ async fn main() {
         //set_camera(&camera);
 
         // DRAW //
-        
         
         map.draw(&mut sb);
         player.draw(Some(&mut sb));

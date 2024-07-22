@@ -1,9 +1,11 @@
 
 use ahash::AHashMap;
-use super::{data::MapData::{self, *}, misc::MapLayerLoader, properties::TileMapProperty};
+use super::{data::MapData, misc::MapLayerLoader, properties::TileMapProperty};
+
+static DEPTH_PROPERTY_NAME: &str = "depth";
 
 #[derive(Debug)]
-//#[allow(dead_code)]
+#[allow(dead_code)]
 // Parallax not supported (not yet needed in the scope of what I'm doing)
 pub(crate) struct MapLayer {
     data: MapData,
@@ -14,7 +16,7 @@ pub(crate) struct MapLayer {
     z: usize,
     name: String,
     visible: bool,
-    properties: Option<AHashMap<String, TileMapProperty>>,
+    properties: AHashMap<String, TileMapProperty>,
 }
 
 impl MapLayer {
@@ -40,14 +42,16 @@ impl MapLayer {
             Some(prop) => {
                 let mut hm = AHashMap::new();
                 for p in prop {
-                    let k = p.name.clone();
-                    let v = TileMapProperty::from_json_value(p.value, &p.name);
+                    let k = p.name;
+                    let v = TileMapProperty::from_json_value(p.value, &p.prop_type);
                     hm.insert(k, v);
                 }
-                Some(hm)
+                hm
             },
-            None => None,
+            None => AHashMap::new(),
         };
+
+        // println!("{:?}", &properties);
 
         Self {
             data,
@@ -63,25 +67,19 @@ impl MapLayer {
     }
 
     pub(crate) fn z(&self) -> usize {
-        self.z
+        match self.properties.get(DEPTH_PROPERTY_NAME) {
+            Some(z) => z.get_number_value(),
+            None => self.z,
+        }
+        
     }
 
     pub(crate) fn data(&self) -> &MapData {
         &self.data
     }
 
+    #[allow(dead_code)]
     pub(crate) fn width(&self) -> usize {
         self.width
-    }
-
-    // This assumes uniform chunk width.... careful!
-    pub(crate) fn chunk_width(&self) -> Option<i32> {
-        return match &self.data {
-            Chunks(chunk) => match chunk.first() {
-                Some(first) => Some(first.width()),
-                _ => None,
-            },
-            _ => None,
-        }
     }
 }

@@ -1,8 +1,16 @@
-use macroquad::{color::{Color, RED, WHITE}, math::Vec2, text::draw_text, texture::{draw_texture_ex, DrawTextureParams, Texture2D}};
+
+use macroquad::{
+    color::WHITE,
+    math::Vec2,
+    texture::{
+        draw_texture_ex,
+        DrawTextureParams,
+        Texture2D
+    }
+};
 use crate::gfx::{DrawCommand, SpriteBatch};
 
-use super::{layer::MapLayer, tileset::TileSet, data::MapData::*};
-
+use super::{data::MapData::*, layer::MapLayer, tileset::TileSet};
 
 #[allow(dead_code)]
 #[derive(Debug)]
@@ -17,20 +25,19 @@ pub struct TileMap {
     pub(super) draw_scale: f32,
 }
 
-#[allow(dead_code)]
+//#[allow(dead_code)]
 impl TileMap {
-
-    pub fn texture(&self) -> &Texture2D {
-        &self.texture
-    }
 
     pub fn set_draw_scale(&mut self, scale: f32) {
         self.draw_scale = scale;
     }
 
     fn idx_to_x_y(&self, idx: usize) -> (f32, f32) {
-        let x = ((idx % self.width) * self.tilewidth) as f32 * self.draw_scale;
-        let y = ((idx / self.width) * self.tileheight) as f32 * self.draw_scale;
+        // FIXME: localize all scaling to draw helper
+        //let x = ((idx % self.width) * self.tilewidth) as f32 * self.draw_scale;
+        //let y = ((idx / self.width) * self.tileheight) as f32 * self.draw_scale;
+        let x = (idx % self.width) as f32;
+        let y = (idx / self.width) as f32;
         (x, y)
     }
 
@@ -47,6 +54,10 @@ impl TileMap {
             ..Default::default()
         };
 
+        // scale x/y to tile size
+        let x = x * size.x;
+        let y = y * size.y;
+
         match spritebatch {
             Some(sb) => {
                 let dc = DrawCommand {
@@ -58,21 +69,9 @@ impl TileMap {
                     ..Default::default()
                 };
                 sb.add(dc);
-
-                // idk man
-                let dc2 = DrawCommand {
-                    x,
-                    y,
-                    z: Some(99),
-                    params: DrawTextureParams {
-                        dest_size: Some(size),
-                        ..Default::default()
-                    },
-                    ..Default::default()
-                };
-                sb.add(dc2);
             },
             None => {
+                // TODO take a look at this... useless use case?
                 draw_texture_ex(
                     &self.texture,
                     x,
@@ -82,19 +81,6 @@ impl TileMap {
                     );
             }
         }
-    }
-
-    pub fn draw_all_immediate(&self) {
-        let v: Vec<usize> = (0..self.layers.len()).into_iter().collect();
-        self.draw_layers_inner(&v, None);
-    }
-
-    pub fn draw_layers(&self, layers: &[usize]) {
-        self.draw_layers_inner(layers, None);
-    }
-
-    pub fn draw_layers_deferred(&self, layers: &[usize], spritebatch: &mut SpriteBatch) {
-        self.draw_layers_inner(layers, Some(spritebatch));
     }
 
     #[allow(unused_variables)]
@@ -113,53 +99,25 @@ impl TileMap {
                 RawData(data) => {
                     for (i, tile) in data.iter().enumerate().filter(|(_, t)| **t != 0) {
                         let (x, y) = self.idx_to_x_y(i);
-    
                         self.draw_helper(*tile, x, y, layer.z(), &mut spritebatch);
                     }
                 },
                 
                 Chunks(chunks) => {
-                    let w = layer.chunk_width().unwrap();
-                    let num_chunks_x = layer.width() as i32 / w;
+                    for chunk in chunks {
+                        for y in 0..chunk.height() {
+                            for x in 0..chunk.width() {
 
-                    for (chunk, i) in chunks.iter().zip((0 as i32)..) {
+                                let tid = chunk[(x, y)];
 
-                        for (yidx, y) in (chunk.y()..chunk.y() + chunk.height()).enumerate() {
-
-                            for (xidx, x) in (chunk.x()..chunk.x() + chunk.width()).enumerate() {
-                                
-                                let tile_id = chunk.data()[((yidx * chunk.width() as usize) + xidx) as usize];
-
-                                if tile_id == 0 {
+                                if tid == 0 {
                                     continue;
                                 }
 
-                                let (chunk_num_x, chunk_num_y) = (i % num_chunks_x, i / num_chunks_x);
+                                let real_x = (x as i32 + chunk.x()) as f32;
+                                let real_y = (y as i32 + chunk.y()) as f32;
 
-                                let (chunk_pix_size_offset_x, chunk_pix_size_offset_y) = (
-                                    // chunk_num_x * chunk.width() * self.tilewidth as i32,
-                                    chunk_num_x * chunk.width() as i32,
-                                    chunk_num_y * chunk.height() as i32
-                                );
-                                let (x_, y_) = ((x * self.tilewidth as i32) as f32, (y * self.tileheight as i32) as f32);
-
-                                
-                                let (real_x, real_y) = (
-                                    (chunk_pix_size_offset_x as f32 + x_) * self.draw_scale,
-                                    (chunk_pix_size_offset_y as f32 + y_) * self.draw_scale,
-                                );
-
-                                let num = x + y * self.tilewidth as i32;
-                                
-
-                                //let real_x = (((i % num_chunks_x) * chunk.width() * self.tilewidth as i32) + (x * self.tilewidth as i32)) as f32 * self.draw_scale;
-                                //let real_y = (((i / num_chunks_x) * chunk.height() * self.tileheight as i32) + (y * self.tileheight as i32)) as f32 * self.draw_scale;
-                                
-                                self.draw_helper(tile_id, real_x, real_y, layer.z(), &mut spritebatch);
-                                
-                                if yidx == 0 && xidx == 0 {
-                                    draw_text(&i.to_string(), real_x, real_y, 32., RED);
-                                }
+                                self.draw_helper(tid, real_x, real_y, layer.z(), &mut spritebatch);
                             }
                         }
                     }

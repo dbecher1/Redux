@@ -1,5 +1,5 @@
 
-use macroquad::{color::WHITE, math::{Rect, Vec2}, texture::{draw_texture_ex, DrawTextureParams, Texture2D}};
+use macroquad::{math::{Rect, Vec2}, texture::{DrawTextureParams, Texture2D}};
 use builder::AnimationBuilder;
 use crate::entity::Updateable;
 

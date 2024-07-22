@@ -15,6 +15,7 @@ pub(crate) struct StateMachineLoader {
 }
 
 #[derive(Deserialize, Debug)]
+#[allow(dead_code)]
 pub(crate) struct AnimationLoader {
     pub(crate) name: Option<String>,
     pub(crate) texture_name: Option<String>,

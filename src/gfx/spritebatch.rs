@@ -1,6 +1,6 @@
 use macroquad::color::RED;
 use macroquad::math::{Rect, Vec2};
-use macroquad::shapes::{draw_rectangle, draw_rectangle_ex, draw_rectangle_lines};
+use macroquad::shapes::draw_rectangle_lines;
 use macroquad::window::{screen_height, screen_width};
 use macroquad::{color::WHITE, texture::draw_texture_ex};
 use std::cmp::Ordering;
@@ -41,7 +41,7 @@ impl SpriteBatch {
     }
 
     pub fn update(&mut self, position: Vec2) {
-        //let (half_w, half_h) = self.half_size();
+        // TODO!! size offset
         let (half_w, half_h) = (0., 0.);
         self.camera.x = position.x - half_w;
         self.camera.y = position.y - half_h;

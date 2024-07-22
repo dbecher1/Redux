@@ -1,7 +1,7 @@
 
 use ahash::AHashMap;
 use macroquad::texture::{load_texture, FilterMode, Texture2D};
-use crate::{entity::Updateable, gfx::{spritebatch, SpriteBatch}};
+use crate::{entity::Updateable, gfx::SpriteBatch};
 
 use super::{builder::AnimationBuilder, loader::*, Animation};
 
