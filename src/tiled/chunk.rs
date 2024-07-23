@@ -1,11 +1,12 @@
 
 use std::ops::Index;
 use serde::Deserialize;
+use super::data::TileID;
 
 #[derive(Deserialize, Debug)]
 #[allow(dead_code)]
 pub(crate) struct MapChunk {
-    data: Vec<u32>,
+    data: Vec<TileID>,
     height: usize,
     width: usize,
     x: i32,
@@ -31,13 +32,13 @@ impl MapChunk {
         self.height
     }
 
-    pub(crate) fn data(&self) -> &Vec<u32> {
+    pub(crate) fn data(&self) -> &Vec<TileID> {
         &self.data
     }
 }
 
 impl Index<(usize, usize)> for MapChunk {
-    type Output = u32;
+    type Output = TileID;
 
     fn index(&self, (x, y): (usize, usize)) -> &Self::Output {
         let idx = (y * self.width) + x;
@@ -53,7 +54,7 @@ impl Index<(usize, usize)> for MapChunk {
 }
 
 impl Index<(i32, i32)> for MapChunk {
-    type Output = u32;
+    type Output = TileID;
 
     fn index(&self, (x, y): (i32, i32)) -> &Self::Output {
         // Check for negative index

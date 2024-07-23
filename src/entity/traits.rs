@@ -1,6 +1,5 @@
 use macroquad::math::Vec2;
 
-
 pub trait Moveable {
     fn position(&self) -> Vec2;
     fn delta(&self) -> Vec2;

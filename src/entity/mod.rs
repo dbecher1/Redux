@@ -1,16 +1,15 @@
 use ahash::AHashMap;
-use traits::Moveable;
 use macroquad::math::Vec2;
 use crate::gfx::{load_animations, AnimationStateMachine, SpriteBatch};
-use loader::EntityLoader;
 use std::fs::File;
 
 mod player;
 mod traits;
 mod loader;
 
-pub use traits::Updateable;
+pub use traits::{Updateable, Moveable};
 pub use player::Player;
+pub use loader::EntityLoader;
 
 static ENTITY_PATH: &str = "resources/entity/";
 

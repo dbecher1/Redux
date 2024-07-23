@@ -1,6 +1,7 @@
 use macroquad::color::RED;
 use macroquad::math::{Rect, Vec2};
 use macroquad::shapes::draw_rectangle_lines;
+use macroquad::texture::DrawTextureParams;
 use macroquad::window::{screen_height, screen_width};
 use macroquad::{color::WHITE, texture::draw_texture_ex};
 use std::cmp::Ordering;
@@ -15,6 +16,7 @@ pub struct SpriteBatch {
     camera: Rect,
     sorted_queue: BTreeMap<usize, Vec<DrawCommand>>,
     sort_layer: usize,
+    draw_scale: Option<f32>,
 }
 
 fn y_sort_compare(y1: f32, y2: f32) -> Ordering {
@@ -32,11 +34,20 @@ impl SpriteBatch {
     pub fn new() -> Self {
 
         let camera = Rect::new(0., 0., screen_width(), screen_height());
+        let draw_scale = None;
 
         Self {
             camera,
             sorted_queue: BTreeMap::new(),
-            sort_layer: DEFAULT_SORT_LAYER,
+            sort_layer: DEFAULT_SORT_LAYER, // TODO: Delete?
+            draw_scale
+        }
+    }
+
+    pub fn set_draw_scale(&mut self, scale: f32) {
+        self.draw_scale = match scale {
+            1. => None,
+            _ => Some(scale),
         }
     }
 
@@ -102,6 +113,18 @@ impl SpriteBatch {
                 let x = (dc.x - x_offset).floor();
                 let y = (dc.y - y_offset).floor();
 
+                let params = if let Some(scale) = self.draw_scale {
+                    match dc.params.dest_size {
+                        Some(size) => DrawTextureParams {
+                            dest_size: Some(size * scale),
+                            ..dc.params
+                        },
+                        None => dc.params
+                    }
+                } else {
+                    dc.params
+                };
+
                 match &dc.texture {
                     Some(texture) => {
                         draw_texture_ex(
@@ -109,11 +132,13 @@ impl SpriteBatch {
                             x,
                             y,
                             WHITE,
-                            dc.params
+                            params
                         );
                     },
                     None => {
-                        let size = dc.params.dest_size.unwrap_or_default();
+                        //let size = dc.params.dest_size.unwrap_or_default();
+                        // THIS DOESN'T WORK
+                        let size = Vec2::ZERO;
                         draw_rectangle_lines(x, y, size.x, size.y, 1., RED);
                     },
                 }

@@ -38,21 +38,19 @@ impl MapLayer {
         let name = raw.name;
         let visible = raw.visible;
 
-        let properties = match raw.properties {
+        let mut properties = AHashMap::new();
+        match raw.properties {
             Some(prop) => {
-                let mut hm = AHashMap::new();
                 for p in prop {
                     let k = p.name;
                     let v = TileMapProperty::from_json_value(p.value, &p.prop_type);
-                    hm.insert(k, v);
+                    properties.insert(k, v);
                 }
-                hm
             },
-            None => AHashMap::new(),
+            None => {},
         };
 
         // println!("{:?}", &properties);
-
         Self {
             data,
             width,
@@ -66,12 +64,13 @@ impl MapLayer {
         }
     }
 
+    // Checks the depth value first since that's what I want to use
+    // Leaving in the code for the old z value though
     pub(crate) fn z(&self) -> usize {
         match self.properties.get(DEPTH_PROPERTY_NAME) {
             Some(z) => z.get_number_value(),
             None => self.z,
         }
-        
     }
 
     pub(crate) fn data(&self) -> &MapData {

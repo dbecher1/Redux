@@ -5,6 +5,8 @@ edition = "2021"
 
 [dependencies]
 ahash = { version = "0.8.11", features = ["serde"] }
+ril = { version = "0", features = ["png"] }
 macroquad = "0.4.6"
 serde = { version = "1.0.203", features = ["derive"] }
 serde_json = "*"
+walkdir = "2.5.0"

@@ -3,7 +3,7 @@ use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
 #[allow(dead_code)]
-pub(crate) struct EntityLoader {
+pub struct EntityLoader {
     pub(crate) name: String,
     pub(crate) animation_data: String,
     pub(crate) move_speed: Option<f32>,
