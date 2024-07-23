@@ -1,9 +1,6 @@
 
 use serde::Deserialize;
-use serde_json::{
-    Result as JsonResult,
-    Error as JsonError
-};
+
 use crate::entity::EntityLoader;
 use std::fs::File;
 
@@ -13,6 +10,7 @@ static SCENE_PATH: &str = "resources/scenes/";
 pub struct SceneLoader {
     pub(crate) scene_type: String, // Required
     pub(crate) map: Option<String>,
+    #[allow(dead_code)]
     pub(crate) entities: Option<Vec<EntityLoader>>,
 }
 

@@ -1,9 +1,10 @@
 
-#[allow(unused_imports)]
-use std::collections::HashMap;
-
 mod input_manager;
+
+#[allow(unused_imports, dead_code)]
 mod resource_manager;
+
+#[allow(unused_imports, dead_code)]
 mod image_packer;
 
 pub use input_manager::InputManager;

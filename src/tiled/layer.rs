@@ -1,6 +1,6 @@
 
 use ahash::AHashMap;
-use super::{data::MapData, misc::MapLayerLoader, properties::TileMapProperty};
+use super::{data::MapData, loaders::MapLayerLoader, properties::TileMapProperty};
 
 static DEPTH_PROPERTY_NAME: &str = "depth";
 

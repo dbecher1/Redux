@@ -9,7 +9,7 @@ use macroquad::{
     }
 };
 use crate::gfx::{DrawCommand, SpriteBatch};
-use super::misc::RawTileMap;
+use super::loaders::RawTileMap;
 use macroquad::texture::{load_texture, FilterMode};
 use std::fs::File;
 use serde_json::Result;
@@ -18,22 +18,22 @@ use super::{data::MapData::*, layer::MapLayer, tileset::TileSet};
 
 static TILEMAP_PATH: &str = "resources/maps/";
 
-#[allow(dead_code)]
+
 #[derive(Debug)]
 pub struct TileMap {
     pub(super) texture: Texture2D,
     pub(super) tileset: TileSet,
     pub(super) layers: Vec<MapLayer>,
-    pub(super) height: usize,
     pub(super) width: usize,
     pub(super) tileheight: usize,
     pub(super) tilewidth: usize,
     pub(super) draw_scale: f32,
 }
 
-//#[allow(dead_code)]
+
 impl TileMap {
 
+    #[allow(dead_code)]
     pub async fn load_map_from_name(name: &str) -> Result<Self> {
         let mut path = String::from(TILEMAP_PATH);
         path.push_str(name);
@@ -121,7 +121,6 @@ impl TileMap {
             tileset,
             layers,
             width: raw_map.width,
-            height: raw_map.height,
             tilewidth: raw_map.tilewidth as usize,
             tileheight: raw_map.tileheight as usize,
             draw_scale: 1.,

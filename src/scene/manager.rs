@@ -1,7 +1,6 @@
 
 use macroquad::logging::*;
-
-use super::Scene::{self, *};
+use super::Scene;
 
 // General game state manager
 pub struct SceneManager {

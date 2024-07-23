@@ -6,12 +6,11 @@ use super::{chunk::MapChunk, properties::PropertyLoader};
 pub(crate) struct TileSetReadData {
     pub(crate) source: String,
     
-    #[allow(dead_code)]
+    // Currently unused
     pub(crate) firstgid: u32,
 }
 
 #[derive(Deserialize, Debug)]
-#[allow(dead_code)]
 pub(crate) struct RawTileMap {
     pub(crate) height: usize,
     pub(crate) width: usize,
@@ -23,7 +22,6 @@ pub(crate) struct RawTileMap {
 }
 
 #[derive(Deserialize, Debug)]
-#[allow(dead_code)]
 pub(crate) struct MapLayerLoader {
     pub(crate) data: Option<Vec<u32>>,
     pub(crate) chunks: Option<Vec<MapChunk>>,

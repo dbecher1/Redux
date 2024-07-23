@@ -7,18 +7,21 @@ mod tools;
 mod tiled;
 mod gfx;
 mod entity;
+
+#[allow(dead_code)]
 mod scene;
 
 // use crate::tools::ResourceManager;
-use tiled::load_map;
+use tiled::TileMap;
 
-#[allow(unused_imports)]
+#[allow(dead_code, unused_imports)]
 use tools::{ResourceManager, ImagePacker};
 
 #[macroquad::main("test")]
 async fn main() {
 
-    let mut map = load_map("resources/maps/help/help.tmj", &[]).await.unwrap();
+    let mut map = TileMap::load_map("resources/maps/help/help.tmj", &[]).await.unwrap();
+    // TODO: fix this in sprite batch to localize draw scale
     map.set_draw_scale(2.0);
     let mut player = Player::new("player").await.unwrap();
 

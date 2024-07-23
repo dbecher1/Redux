@@ -14,7 +14,6 @@ use ahash::AHashMap;
 use walkdir::WalkDir;
 use std::cmp::Ordering;
 
-
 static FILE_PATH: &str = "resources/";
 static SUPPORTED_FILE_TYPES: [&str; 1] = ["png"];
 static SAVE_IMAGE: bool = true;
