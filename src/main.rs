@@ -10,6 +10,7 @@ mod entity;
 
 // use crate::tools::ResourceManager;
 use tiled::load_map;
+use tools::ResourceManager;
 
 #[macroquad::main("test")]
 async fn main() {
@@ -20,6 +21,8 @@ async fn main() {
     let mut player = Player::new("player").await.unwrap();
 
     let mut sb = SpriteBatch::new();
+
+    let mut rm = ResourceManager::get_manager();
     
     loop {
         clear_background(GRAY);
