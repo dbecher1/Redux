@@ -184,3 +184,53 @@ impl Updateable for AnimationStateMachine {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+
+    use macroquad::logging::info;
+
+    use super::*;
+
+    // Have to use tokio just for testing async
+    #[macroquad::test]
+    async fn setup_state() {
+        info!("Test2");
+        let mut test_state = load_animations("test_atlas").await.expect("AHH");
+        info!("Test3");
+        let curr_state = test_state.current_state.clone();
+
+        // test atlas has 4 states: the cardinal directions
+        // Make sure the default direction is ok
+        assert_eq!(test_state.current_state, String::from("Left"));
+
+        // Make sure getting a nonexistant state doesn't panic
+        assert!(test_state.animations.get("").is_none());
+
+        // Make sure the initial state sets correctly
+        assert!(test_state.animations.get(&test_state.current_state).is_some());
+
+        // Make sure we can't set the state to something that doesn't exist
+        test_state.set_state("");
+        // Behavior should be nothing
+        assert_eq!(test_state.current_state, curr_state);
+
+        // Make sure we can set a state that -does- exist
+        let right = String::from("Right");
+        test_state.set_state(&right);
+        assert_ne!(curr_state, test_state.current_state);
+
+        assert!(test_state.animations.get(&right).is_some());
+
+        // Initial state should be playing
+        assert!(test_state.is_playing);
+
+        test_state.stop();
+        assert!(!test_state.is_playing);
+
+        test_state.start();
+        assert!(test_state.is_playing);
+
+        ()
+    }
+}

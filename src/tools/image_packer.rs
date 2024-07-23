@@ -9,7 +9,6 @@ use macroquad::{
         Texture2D,
     },
 };
-use ril::{Image as RilImage, Rgba};
 use ahash::AHashMap;
 use walkdir::WalkDir;
 use std::cmp::Ordering;
@@ -169,20 +168,7 @@ impl ImagePacker {
             }
 
             if SAVE_IMAGE {
-                let save_img = RilImage::<Rgba>::from_fn(
-                    final_image.width() as u32,
-                    final_image.height() as u32,
-                    |x, _y| {
-                        let c = final_image.get_pixel(x, _y);
-                        Rgba {
-                            r: (c.r * 255.) as u8,
-                            g: (c.g * 255.) as u8,
-                            b: (c.b * 255.) as u8,
-                            a: (c.a * 255.) as u8,
-                        }
-                    }
-                );
-                let _ = save_img.save_inferred("image.png");
+                final_image.export_png("image.png");
             }
 
             let texture = Texture2D::from_image(&final_image);

@@ -6,7 +6,7 @@ use crate::gfx::AnimationStateMachine;
 use super::ANIMATION_PATH;
 
 #[derive(Deserialize, Debug)]
-pub(crate) struct StateMachineLoader {
+pub struct StateMachineLoader {
     pub(crate) initial_state: String,
     pub(crate) texture_name: Option<String>,
     pub(crate) size: Option<(u32, u32)>,

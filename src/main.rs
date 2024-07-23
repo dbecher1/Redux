@@ -3,13 +3,13 @@ use gfx::SpriteBatch;
 use macroquad::prelude::*;
 use entity::{Player, Updateable};
 
-mod tools;
-mod tiled;
-mod gfx;
-mod entity;
+pub mod tools;
+pub mod tiled;
+pub mod gfx;
+pub mod entity;
 
 #[allow(dead_code)]
-mod scene;
+pub mod scene;
 
 // use crate::tools::ResourceManager;
 use tiled::TileMap;
