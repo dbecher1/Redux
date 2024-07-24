@@ -192,7 +192,6 @@ mod tests {
 
     use super::*;
 
-    // Have to use tokio just for testing async
     #[macroquad::test]
     async fn setup_state() {
         info!("Test2");

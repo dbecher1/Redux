@@ -1,21 +1,40 @@
-use macroquad::color::RED;
-use macroquad::math::{Rect, Vec2};
-use macroquad::shapes::draw_rectangle_lines;
-use macroquad::texture::DrawTextureParams;
-use macroquad::window::{screen_height, screen_width};
-use macroquad::{color::WHITE, texture::draw_texture_ex};
-use std::cmp::Ordering;
-use std::collections::BTreeMap;
+use macroquad::{
+    color::{
+        RED,
+        WHITE,
+    },
+    math::{
+        Rect,
+        Vec2,
+    },
+    shapes::draw_rectangle_lines,
+    texture::{
+        DrawTextureParams,
+        draw_texture_ex,
+    },
+    window::{
+        screen_height,
+        screen_width,
+    },
+};
+use std::{
+    cmp::Ordering,
+    collections::BTreeMap,
+};
 use super::DrawCommand;
+use ahash::AHashSet;
 
 static MANUAL_OFFSET: f32 = 13.;
 static DEFAULT_SORT_LAYER: usize = 2;
 
-// PLACEHOLDER
 pub struct SpriteBatch {
     camera: Rect,
     sorted_queue: BTreeMap<usize, Vec<DrawCommand>>,
-    sort_layer: usize,
+
+    // Changing this from just one set layer to be able to set any number of layers
+    sort_layers: AHashSet<usize>,
+    sort_layer: Option<usize>, // Keeping a field of this here though so old code doesn't break
+
     draw_scale: Option<f32>,
 }
 
@@ -27,20 +46,43 @@ fn y_sort_compare(y1: f32, y2: f32) -> Ordering {
 #[allow(dead_code)]
 impl SpriteBatch {
 
+
     pub fn sort_layer(&self) -> usize {
-        self.sort_layer
+        self.sort_layer.unwrap_or(DEFAULT_SORT_LAYER)
+    }
+
+    pub fn add_sort_layer(&mut self, layer: usize) {
+        self.sort_layers.insert(layer);
+        if self.sort_layer.is_none() {
+            self.sort_layer = Some(layer);
+        }
+    }
+
+    pub fn remove_sort_layer(&mut self, layer: usize) {
+        self.sort_layers.remove(&layer);
+        if let Some(l) = self.sort_layer {
+            if l == layer {
+                self.sort_layer = None;
+            }
+        }
     }
 
     pub fn new() -> Self {
 
         let camera = Rect::new(0., 0., screen_width(), screen_height());
         let draw_scale = None;
+        let sorted_queue = BTreeMap::new();
+        let mut sort_layers = AHashSet::new();
+        sort_layers.insert(DEFAULT_SORT_LAYER);
+
+        let sort_layer = Some(DEFAULT_SORT_LAYER);
 
         Self {
             camera,
-            sorted_queue: BTreeMap::new(),
-            sort_layer: DEFAULT_SORT_LAYER, // TODO: Delete?
-            draw_scale
+            sorted_queue,
+            sort_layers,
+            sort_layer,
+            draw_scale,
         }
     }
 
@@ -73,7 +115,7 @@ impl SpriteBatch {
             },
             None => {
                 let mut d = dc;
-                d.z = Some(self.sort_layer);
+                d.z = Some(self.sort_layer.unwrap_or(DEFAULT_SORT_LAYER));
                 self.add(d);
             },
         }
@@ -104,7 +146,7 @@ impl SpriteBatch {
         };
 
         for (k, v) in self.sorted_queue.iter_mut() {
-            if k == &self.sort_layer {
+            if self.sort_layers.contains(k) {
                 v.sort_by(|l, r| y_sort_compare(l.y, r.y));
             }
             for dc in v.drain(0..) {
